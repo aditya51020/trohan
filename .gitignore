@@ -1,0 +1,7 @@
+# local backups made while editing — not part of the website
+_backup-*/
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/

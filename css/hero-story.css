@@ -1,0 +1,145 @@
+
+/* ===== Hero story animation (replaces the "project photos" placeholder) =====
+   A looping, coded illustration of how a Trohan job runs:
+   request -> site visit -> quote -> permit -> wiring -> lights on -> inspection.
+   Alternates a home (residential) and an office (commercial). JS: js/hero-story.js */
+.hero .media.hero-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  align-items: center;
+  gap: var(--space-6);
+  /* bottom padding clears the next band, which overlaps the hero by --radius-section */
+  padding: var(--space-6) var(--space-6) calc(var(--radius-section) + 12px);
+  color: var(--color-primary);
+  text-align: left;
+  overflow: hidden;
+  font-size: 1rem;
+}
+.hs-stage { align-self: end; }
+.hs-stage svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* shared drawing style */
+.hero-story svg * { vector-effect: non-scaling-stroke; }
+.hs-ground { stroke: var(--color-primary); stroke-width: 2; }
+.hs-pole rect { fill: var(--color-primary); }
+.hs-wall { fill: var(--color-surface); stroke: var(--color-primary); stroke-width: 2; }
+.hs-roof { fill: var(--color-primary); }
+.hs-roofline { fill: var(--color-primary); }
+.hs-door { fill: var(--color-primary); }
+.hs-glass { fill: var(--color-secondary-100); stroke: var(--color-primary); stroke-width: 1.5; }
+.hs-post { fill: none; stroke: var(--color-primary); stroke-width: 3; stroke-linecap: round; }
+.hs-panel rect:first-child { fill: var(--color-surface); stroke: var(--color-primary); stroke-width: 2; }
+.hs-panel rect:nth-child(2) { fill: var(--color-secondary); }
+.hs-panel circle { fill: var(--color-primary); }
+
+/* wires: drawn in with stroke-dashoffset (length set by JS as --len) */
+.hs-wire {
+  fill: none; stroke: var(--color-accent-purple); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: var(--len, 1000); stroke-dashoffset: var(--len, 1000);
+  transition: stroke-dashoffset .8s cubic-bezier(.65, 0, .35, 1);
+}
+.hs-wire.hs-under { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; transition: opacity .6s ease; }
+.hs-wire.is-drawn { stroke-dashoffset: 0; }
+.hs-wire.hs-under.is-drawn { opacity: 1; stroke: var(--color-primary); stroke-dasharray: 6 6; }
+/* current pulse running along a drawn wire */
+.hs-pulse {
+  fill: none; stroke: var(--color-accent-lime); stroke-width: 4; stroke-linecap: round;
+  stroke-dasharray: 12 var(--len, 1000); stroke-dashoffset: 12; opacity: 0;
+}
+.hs-pulse.is-on { opacity: 1; animation: hs-pulse 1.4s linear infinite; animation-delay: var(--d, 0s); }
+@keyframes hs-pulse { from { stroke-dashoffset: 12px; } to { stroke-dashoffset: calc(var(--len) * -1); } }
+
+/* lights: off -> on */
+.hs-light { fill: var(--color-secondary-100); stroke: var(--color-primary); stroke-width: 1.5; transition: fill .45s ease, filter .45s ease; }
+.hs-light.is-on { fill: var(--color-accent-lime); filter: drop-shadow(0 0 10px var(--color-accent-lime)); }
+.hs-sign.is-on { fill: var(--color-secondary); filter: drop-shadow(0 0 8px var(--color-secondary)); }
+.hs-cone { fill: transparent; stroke: none; opacity: 0; transition: opacity .6s ease; }
+.hs-cone.is-on { fill: color-mix(in srgb, var(--color-accent-lime) 50%, transparent); filter: none; opacity: 1; }
+
+/* scenes */
+.hs-scene { opacity: 0; transition: opacity .5s ease; }
+.hero-story[data-scene="residential"] .hs-res,
+.hero-story[data-scene="commercial"] .hs-com { opacity: 1; }
+.hero-story[data-scene="residential"] .hs-com,
+.hero-story[data-scene="commercial"] .hs-res { visibility: hidden; }
+
+/* magnifier: site visit */
+.hs-scan { opacity: 0; transition: opacity .3s ease; }
+.hs-scan circle { fill: color-mix(in srgb, var(--color-surface) 60%, transparent); stroke: var(--color-primary); stroke-width: 3; }
+.hs-scan line { stroke: var(--color-primary); stroke-width: 4; stroke-linecap: round; }
+.hs-scan.is-on { opacity: 1; }
+.hs-scan.is-on circle, .hs-scan.is-on line { animation: hs-scan 1.6s ease-in-out infinite; }
+@keyframes hs-scan { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(-10px, 14px); } 66% { transform: translate(6px, 26px); } }
+
+/* van drives in */
+.hs-van { transform: translateX(-200px); opacity: 0; transition: transform 1.3s cubic-bezier(.16, 1, .3, 1), opacity .4s ease; }
+.hs-van.is-in { transform: translateX(22px); opacity: 1; }
+.hs-van-body { fill: var(--color-primary); }
+.hs-van-cab { fill: var(--color-accent-purple); }
+.hs-van-bolt { fill: var(--color-accent-lime); }
+.hs-van-text { fill: var(--color-text-on-dark); font: 800 13px var(--font-heading); letter-spacing: .04em; }
+.hs-wheel { fill: var(--color-primary); stroke: var(--color-bg); stroke-width: 3; }
+
+/* stamp */
+.hs-stamp { opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity .25s ease; }
+.hs-stamp rect { fill: var(--color-surface); stroke: var(--color-accent-purple); stroke-width: 3; }
+.hs-stamp-text { fill: var(--color-accent-purple); font: 800 15px var(--font-heading); letter-spacing: .06em; text-anchor: middle; }
+.hs-stamp.is-on { opacity: 1; animation: hs-stamp .45s cubic-bezier(.16, 1, .3, 1); }
+.hs-stamp.is-pass rect { fill: var(--color-accent-lime); stroke: var(--color-primary); }
+.hs-stamp.is-pass .hs-stamp-text { fill: var(--color-primary); }
+@keyframes hs-stamp { from { opacity: 0; scale: 1.6; } to { opacity: 1; scale: 1; } }
+
+/* ---------- UI cards (right) ---------- */
+.hs-ui { display: grid; gap: 12px; align-self: center; }
+.hs-card {
+  background: var(--color-surface); border-radius: var(--radius-md); padding: 16px 18px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .5s ease, transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+.hs-card.is-in { opacity: 1; transform: none; }
+.hs-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.hs-tag { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: var(--color-secondary-100); color: var(--color-accent-purple); font-size: 12px; font-weight: 600; }
+.hs-new { font-size: 12px; color: var(--color-text-muted); }
+.hs-new::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--color-accent-purple); animation: hs-blink 1.2s ease-in-out infinite; }
+@keyframes hs-blink { 50% { opacity: .25; } }
+.hs-title { margin: 0; font: 600 1.05rem/1.25 var(--font-heading); color: var(--color-primary); }
+.hs-meta { margin: 4px 0 12px; font-size: 13px; color: var(--color-text-muted); }
+.hs-progress { height: 4px; border-radius: 4px; background: var(--color-secondary-100); overflow: hidden; }
+.hs-progress span { display: block; height: 100%; width: var(--p, 0%); background: var(--color-accent-purple); transition: width .6s cubic-bezier(.16, 1, .3, 1); }
+.hs-current { display: none; margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--color-primary); }
+
+.hs-steps { list-style: none; margin: 0; display: grid; gap: 10px; }
+.hs-steps li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--color-text-muted); transition: color .3s ease; }
+.hs-steps i { position: relative; flex: 0 0 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--color-border-strong); transition: background-color .3s ease, border-color .3s ease; }
+.hs-steps li.is-active { color: var(--color-primary); }
+.hs-steps li.is-active i { border-color: var(--color-accent-purple); border-top-color: transparent; animation: hs-spin .8s linear infinite; }
+.hs-steps li.is-done { color: var(--color-primary); }
+.hs-steps li.is-done i { background: var(--color-primary); border-color: var(--color-primary); animation: none; }
+.hs-steps li.is-done i::after { content: ""; position: absolute; left: 5px; top: 2px; width: 4px; height: 8px; border: solid var(--color-accent-lime); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+@keyframes hs-spin { to { transform: rotate(360deg); } }
+
+.hs-toast { background: var(--color-primary); color: var(--color-text-on-dark); font-size: 14px; }
+.hs-toast b { color: var(--color-accent-lime); font-family: var(--font-heading); }
+
+/* pause / play (WCAG 2.2.2: moving content longer than 5s can be paused) */
+.hs-toggle {
+  position: absolute; right: 12px; bottom: calc(var(--radius-section) + 10px); width: 34px; height: 34px; border-radius: 50%;
+  background: var(--color-surface); border: 1px solid var(--color-border-strong); cursor: pointer; display: grid; place-items: center;
+}
+.hs-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.hs-pause { width: 10px; height: 12px; border-left: 3px solid var(--color-primary); border-right: 3px solid var(--color-primary); }
+.hs-toggle[aria-pressed="true"] .hs-pause { width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent var(--color-primary); }
+.hero-story.is-paused *, .hero-story.is-paused *::before, .hero-story.is-paused *::after { animation-play-state: paused !important; }
+
+@media (max-width: 767px) {
+  .hero .media.hero-story { grid-template-columns: 1fr; aspect-ratio: auto; padding: var(--space-5) var(--space-5) calc(var(--radius-section) + 8px); gap: 12px; }
+  .hs-ui { order: -1; padding-bottom: 0; }
+  .hs-steps { display: none; }
+  .hs-current { display: block; }
+  .hs-toast { display: none; } /* on phones the status line in the request card says "Power on" instead */
+}
+/* reduced motion: story still plays (it is the hero), but the van fades instead of driving */
+@media (prefers-reduced-motion: reduce) {
+  .hs-van { transform: translateX(22px); }
+}
