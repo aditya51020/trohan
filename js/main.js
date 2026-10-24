@@ -141,18 +141,33 @@ document.addEventListener('DOMContentLoaded', function () {
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Contact form: client-side only (no backend wired up)
-  document.querySelectorAll('form[data-demo-form]').forEach(function (form) {
+  // Contact form: no server, so on submit we open the visitor's email app
+  // with a message to Trohan already filled in — they just press Send.
+  document.querySelectorAll('form[data-mail-form]').forEach(function (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      var v = function (name) { var el = form.elements[name]; return el ? el.value.trim() : ''; };
+      var name = (v('first-name') + ' ' + v('last-name')).trim();
+      var subject = v('subject') || 'Quote request from the website';
+      var body = [
+        'Name: ' + name,
+        'Email: ' + v('email'),
+        v('phone') ? 'Phone: ' + v('phone') : '',
+        '',
+        v('message')
+      ].filter(function (line, i) { return line !== '' || i === 3; }).join('\n');
+      var to = form.getAttribute('data-mail-to');
+      window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
       var note = form.querySelector('.form-feedback');
       if (!note) {
         note = document.createElement('p');
         note.className = 'form-feedback form-note';
+        note.setAttribute('role', 'status');
         form.appendChild(note);
       }
-      note.textContent = 'Thanks — your message has been noted. (Demo form: connect a backend such as Formspree or EmailJS to send this for real.)';
-      form.reset();
+      note.innerHTML = 'Your email app should now open with your message to Trohan — just press <b>Send</b>. ' +
+        'If nothing opened, email us at <a href="mailto:' + to + '">' + to + '</a> or call <a href="tel:+17787120824">+1 778-712-0824</a>.';
     });
   });
 
