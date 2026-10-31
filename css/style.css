@@ -472,19 +472,12 @@ p { color: var(--color-text-muted); }
 /* Split / two-column feature */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; }
 .split-media {
-  position: relative;
   background: var(--color-primary);
-  border-radius: var(--radius-lg); 
+  border-radius: var(--radius-lg);
   min-height: 320px;
-  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
 }
-.split-media img {
-  position: absolute;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-} width: 80px; height: 80px; color: var(--color-secondary); }
+.split-media svg { width: 80px; height: 80px; color: var(--color-secondary); }
 .check-list { display: grid; gap: var(--space-3); margin: var(--space-5) 0; }
 .check-list li { display: flex; gap: 12px; align-items: flex-start; font-weight: 500; }
 .check-list svg { width: 20px; height: 20px; color: var(--color-accent-purple); flex-shrink: 0; margin-top: 2px; }
@@ -600,11 +593,7 @@ p { color: var(--color-text-muted); }
 }
 .band-offwhite .blog-card { background: var(--color-surface); }
 .blog-card .thumb { height: 150px; background: var(--color-primary); display: flex; align-items: center; justify-content: center; }
-.blog-card .thumb img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-} width: 36px; height: 36px; color: var(--color-secondary); }
+.blog-card .thumb svg { width: 36px; height: 36px; color: var(--color-secondary); }
 .blog-card .body { padding: var(--space-5); flex: 1; display: flex; flex-direction: column; }
 .blog-meta { font-size: var(--fs-tiny); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; font-weight: 600; }
 .blog-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
@@ -721,13 +710,7 @@ p { color: var(--color-text-muted); }
 /* ===== Mobile nav sheet (hamburger takes over wherever the horizontal nav hides, <=991px) ===== */
 @media (max-width: 991px) {
   .split { grid-template-columns: 1fr; }
-  .split-media {
-  position: relative;
-  background: var(--color-primary);
-  border-radius: var(--radius-lg); 
-  min-height: 320px;
-  overflow: hidden;
-}
+  .split-media { order: -1; min-height: 220px; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr 1fr; }
@@ -823,66 +806,3 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
-
-.ba-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-  margin: var(--space-5) auto;
-  max-width: var(--width-content);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--color-primary);
-}
-.ba-card {
-  position: relative;
-  margin: 0;
-  aspect-ratio: 3/4;
-  overflow: hidden;
-  background: var(--color-primary);
-  line-height: 1;
-}
-.ba-card.ba-after { background: var(--color-text-on-dark); }
-.ba-card img {
-  position: absolute;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: filter 1.4s cubic-bezier(0.19, 1, 0.22, 1);
-}
-.ba-card:hover img { filter: brightness(1.1) contrast(1.1); }
-.ba-card figcaption {
-  position: absolute;
-  left: 0; bottom: 0;
-  width: 100%;
-  background: #000c;
-  color: var(--color-text-on-dark);
-  padding: var(--space-2) var(--space-3);
-  font-size: .95em;
-  font-weight: 600;
-  text-align: center;
-}
-@media (max-width: 767px) {
-  .ba-pair { grid-template-columns: 1fr; }
-  .ba-card { aspect-ratio: 16/9; }
-}
-
-.footer-bbb { height: 60px; }
-.article-figure {
-  margin: var(--space-5) 0;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--color-primary);
-  line-height: 1;
-}
-.article-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.article-figure figcaption {
-  padding: var(--space-2) var(--space-3);
-  text-align: center;
-  font-size: .95em;
-  color: var(--color-text-on-dark-muted);
-}
