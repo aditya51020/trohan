@@ -356,7 +356,39 @@ p { color: var(--color-text-muted); }
 .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ===== Hero (centered, flat solid background, no glow, no stat card) ===== */
-.hero { background: var(--color-bg); color: var(--color-text); text-align: center; padding: var(--space-8) 0 0; }
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-align: center;
+  padding: var(--space-8) 0 0;
+}
+/* Backdrop: a real job photo (LED linear lighting), tinted to the brand
+   lavender and faded out before it reaches the hero card, so it reads as
+   texture and never competes with the headline. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url(../assets/img/hero-bg.jpg) center 22% / cover no-repeat;
+  opacity: 0.30;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 32%, rgba(0,0,0,0.28) 58%, transparent 80%);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 32%, rgba(0,0,0,0.28) 58%, transparent 80%);
+}
+/* a soft lavender glow behind the headline keeps the type on a clean field */
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%; top: -10%;
+  width: min(1100px, 120%); height: 70%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 35%, rgba(244,241,248,0.92) 0%, rgba(244,241,248,0.65) 45%, rgba(244,241,248,0) 72%);
+  pointer-events: none;
+}
 .hero .badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: var(--space-7); }
 .badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -559,53 +591,97 @@ p { color: var(--color-text-muted); }
 /* Before / After slider */
 .before-after {
   position: relative;
-  max-width: 900px;
+  max-width: 760px;
   margin: 0 auto;
-  aspect-ratio: 16/9;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-primary);
+  touch-action: pan-y;
+  line-height: 0;
 }
-.before-after .layer {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-heading); font-weight: 700; font-size: 1.5rem;
+.before-after .layer { position: absolute; inset: 0; }
+.before-after .layer img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.before-after .layer-before { background: var(--color-text-muted); color: var(--color-text-on-dark); }
-.before-after .layer-after {
-  background: var(--color-accent-purple); color: var(--color-text-on-dark);
-  clip-path: inset(0 50% 0 0);
-}
+.before-after .layer-top { clip-path: inset(0 50% 0 0); }
+
+/* the range input is the whole surface: drag, tap-to-jump, arrow keys */
 .before-after input[type="range"] {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   margin: 0;
-  appearance: none;
+  appearance: none; -webkit-appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+  z-index: 3;
+}
+.before-after input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 56px; height: 100%;
   background: transparent;
   cursor: ew-resize;
 }
-.before-after input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
-}
 .before-after input[type="range"]::-moz-range-thumb {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  width: 56px; height: 100%;
+  border: 0; border-radius: 0;
+  background: transparent;
+  cursor: ew-resize;
 }
+.before-after input[type="range"]:focus-visible { outline: 3px solid var(--color-accent-purple); outline-offset: -3px; }
+
 .before-after .divider {
   position: absolute; top: 0; bottom: 0; left: 50%;
-  width: 2px; background: var(--color-surface);
+  width: 3px;
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px rgba(21, 13, 43, 0.25);
+  transform: translateX(-1.5px);
   pointer-events: none;
-  transform: translateX(-1px);
+  z-index: 2;
 }
-.before-after .label { position: absolute; top: 16px; font-size: 0.8rem; font-weight: 600; background: var(--color-primary-80); color: var(--color-text-on-dark); padding: 4px 10px; border-radius: var(--radius-pill); pointer-events: none; }
-.before-after .label-before { left: 16px; }
-.before-after .label-after { right: 16px; }
+.before-after .ba-grip {
+  position: absolute; top: 50%; left: 50%;
+  width: 46px; height: 46px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: 0 4px 16px rgba(21, 13, 43, 0.35);
+  display: grid; place-items: center;
+}
+/* the two arrows on the grip */
+.before-after .ba-grip::before,
+.before-after .ba-grip::after {
+  content: "";
+  position: absolute;
+  width: 8px; height: 8px;
+  border: solid var(--color-primary);
+  border-width: 2px 2px 0 0;
+}
+.before-after .ba-grip::before { transform: translateX(-7px) rotate(-135deg); }
+.before-after .ba-grip::after  { transform: translateX(7px) rotate(45deg); }
+
+.before-after .ba-tag {
+  position: absolute; top: 16px;
+  font-size: 0.8rem; font-weight: 600; line-height: 1;
+  background: rgba(21, 13, 43, 0.78);
+  color: var(--color-text-on-dark);
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+  z-index: 2;
+}
+.before-after .ba-tag-before { left: 16px; }
+.before-after .ba-tag-after { right: 16px; }
+
+@media (max-width: 600px) {
+  .before-after { aspect-ratio: 3 / 4; }
+  .before-after .ba-grip { width: 40px; height: 40px; }
+}
 
 /* Blog cards */
 .blog-card {

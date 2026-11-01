@@ -138,11 +138,19 @@
       <div class="section-head center" data-reveal="rise">
         <div class="eyebrow">Before &amp; After</div>
         <h2>Renovations You'll Be Proud to Show Off</h2>
-        <p>The same staircase — before and after our renovation.</p>
+        <p>Drag the handle to compare — the same staircase, before and after. Keyboard: focus it and use the arrow keys.</p>
       </div>
-      <div class="ba-pair" data-reveal="stagger">
-        <figure class="ba-card"><img src="assets/img/staircase-before.jpg" alt="Curved staircase before renovation: worn carpet, white spindles, flooring torn up" width="1050" height="1400" loading="lazy"><figcaption>Before</figcaption></figure>
-        <figure class="ba-card ba-after"><img src="assets/img/staircase-after.jpg" alt="The same curved staircase after renovation: wood treads, iron balusters and new hardwood floor" width="1050" height="1400" loading="lazy"><figcaption>After</figcaption></figure>
+      <div class="before-after" data-reveal="fade">
+        <div class="layer layer-base">
+          <img src="assets/img/staircase-after.jpg" alt="The same curved staircase after renovation: wood treads, iron balusters and new hardwood floor">
+        </div>
+        <div class="layer layer-top">
+          <img src="assets/img/staircase-before.jpg" alt="Curved staircase before renovation: worn carpet, white spindles, flooring torn up">
+        </div>
+        <span class="ba-tag ba-tag-before">Before</span>
+        <span class="ba-tag ba-tag-after">After</span>
+        <div class="divider"><span class="ba-grip" aria-hidden="true"></span></div>
+        <input type="range" min="0" max="100" value="50" aria-label="Drag to compare the staircase before and after renovation">
       </div>
     </div>
   </section>

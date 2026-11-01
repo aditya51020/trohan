@@ -171,30 +171,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Accessible before/after slider
+  // Accessible before/after slider — the range input gives drag, touch,
+  // click-to-jump and arrow keys for free; we just clip the top layer.
   document.querySelectorAll('.before-after').forEach(function (widget) {
     var range = widget.querySelector('input[type="range"]');
-    var after = widget.querySelector('.layer-after');
+    var top = widget.querySelector('.layer-top');
     var divider = widget.querySelector('.divider');
-    if (!range || !after) return;
+    if (!range || !top) return;
     function update() {
-      var v = range.value;
-      after.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
+      var v = Number(range.value);
+      top.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
       if (divider) divider.style.left = v + '%';
+      widget.style.setProperty('--ba', v + '%');
     }
     range.addEventListener('input', update);
-    range.addEventListener('keydown', function (e) {
-      var step = 5;
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        range.value = Math.max(0, Number(range.value) - step);
-        update();
-      } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        range.value = Math.min(100, Number(range.value) + step);
-        update();
-      }
-    });
     update();
   });
 });
